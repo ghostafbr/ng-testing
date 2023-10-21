@@ -1,23 +1,34 @@
 import {ProductsService} from "./products.service";
 import {TestBed} from "@angular/core/testing";
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
-import {HttpClient, HttpStatusCode} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClient, HttpStatusCode} from "@angular/common/http";
 import {CreateProductDTO, Product, UpdateProductDTO} from "../models/product.model";
 import {environment} from "../../environments/environment";
 import {generateManyProducts, generateOneProduct} from "../models/product.mock";
+import {TokenInterceptor} from "../interceptors/token.interceptor";
+import {TokenService} from "./token.service";
 
 describe('ProductsService', () => {
   let productsService: ProductsService;
   let httpTestingController: HttpTestingController;
+  let tokenService: TokenService;
 
   beforeEach(() => {
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ProductsService, HttpClient],
+      providers: [
+        ProductsService,
+        HttpClient,
+        TokenService,
+        {
+          provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true
+        }
+      ],
     });
     productsService = TestBed.inject(ProductsService);
     httpTestingController = TestBed.inject(HttpTestingController);
+    tokenService = TestBed.inject(TokenService);
   });
 
   afterEach(() => {
@@ -33,6 +44,7 @@ describe('ProductsService', () => {
     it('should return an Product List', (doneFn) => {
       // Arrange
       const mockData: Product[] = generateManyProducts(2);
+      jest.spyOn(tokenService, 'getToken').mockReturnValue('123');
       // Act
       productsService.getAllSimple().subscribe((data) => {
         // Assert
@@ -43,6 +55,8 @@ describe('ProductsService', () => {
 
       // Http Config
       const req = httpTestingController.expectOne(`${environment.API_URL}/api/v1/products`);
+      const headers = req.request.headers;
+      expect(headers.get('Authorization')).toEqual('Bearer 123');
       req.flush(mockData);
 
     });
