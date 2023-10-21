@@ -21,6 +21,7 @@
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
+    "@picocss/pico": "^1.5.10",
     "rxjs": "~7.8.0",
     "save-dev": "^0.0.1-security",
     "ts-node": "^10.9.1",
