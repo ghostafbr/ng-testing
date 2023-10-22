@@ -2,6 +2,7 @@ import {PersonModel} from "./person.model";
 
 describe('Tests for PersonModel', () => {
   let person: PersonModel;
+
   beforeEach(() => {
     person = new PersonModel('John', 'Doe', 30, 80, 1.80);
   });
@@ -57,7 +58,7 @@ describe('Tests for PersonModel', () => {
 
     it('should return Severely Obese', () => {
       // Arrange
-      person.weight = 110;
+      person.weight = 115;
       person.height = 1.80;
       // Act
       const result = person.calculateBMI();
@@ -67,7 +68,7 @@ describe('Tests for PersonModel', () => {
 
     it('should return Morbidly Obese', () => {
       // Arrange
-      person.weight = 120;
+      person.weight = 130;
       person.height = 1.80;
       // Act
       const result = person.calculateBMI();
