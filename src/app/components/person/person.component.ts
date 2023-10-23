@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {PersonModel} from "../../models/person.model";
 
 @Component({
@@ -9,10 +9,15 @@ import {PersonModel} from "../../models/person.model";
 export class PersonComponent {
 
   @Input() person!: PersonModel; // el signo "!" es para indicar que no es null permite inicializarlo después
+  @Output() onSelected = new EventEmitter<PersonModel>();
   bmi: string = '';
 
   calculateBMI(): void {
     this.bmi = this.person.calculateBMI();
+  }
+
+  onClick(): void {
+    this.onSelected.emit(this.person);
   }
 
 
