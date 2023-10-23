@@ -9,13 +9,15 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {TokenInterceptor} from "./interceptors/token.interceptor";
 import { PersonComponent } from './components/person/person.component';
+import { PeopleComponent } from './components/people/people.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PicoPreviewComponent,
     ProductsComponent,
-    PersonComponent
+    PersonComponent,
+    PeopleComponent
   ],
   imports: [
     BrowserModule,

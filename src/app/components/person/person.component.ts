@@ -9,5 +9,11 @@ import {PersonModel} from "../../models/person.model";
 export class PersonComponent {
 
   @Input() person!: PersonModel; // el signo "!" es para indicar que no es null permite inicializarlo después
+  bmi: string = '';
+
+  calculateBMI(): void {
+    this.bmi = this.person.calculateBMI();
+  }
+
 
 }

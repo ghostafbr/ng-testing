@@ -53,4 +53,29 @@ describe('PersonComponent', () => {
     expect(pElement?.textContent).toContain(expectedMessage);
   });
 
+  it('should display a text with the BMI when call calculateBMI', () => {
+    // Arrange
+    component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
+    const expectedMessage = `Morbidly Obese`;
+    const button = fixture.debugElement.query(By.css('button.btn-bmi')).nativeElement;
+    // Act
+    component.calculateBMI();
+    fixture.detectChanges();
+    // Assert
+    expect(button?.textContent).toContain(expectedMessage);
+  });
+
+  it('should display a text with the BMI when do click', () => {
+    // Arrange
+    component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
+    const expectedMessage = `Morbidly Obese`;
+    const buttonDebug: DebugElement = fixture.debugElement.query(By.css('button.btn-bmi'));
+    const buttonElement: HTMLElement = buttonDebug.nativeElement;
+    // Act
+    buttonDebug.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    // Assert
+    expect(buttonElement?.textContent).toContain(expectedMessage);
+  });
+
 });
