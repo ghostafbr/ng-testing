@@ -10,6 +10,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {TokenInterceptor} from "./interceptors/token.interceptor";
 import { PersonComponent } from './components/person/person.component';
 import { PeopleComponent } from './components/people/people.component';
+import { ProductComponent } from './components/product/product.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { PeopleComponent } from './components/people/people.component';
     PicoPreviewComponent,
     ProductsComponent,
     PersonComponent,
-    PeopleComponent
+    PeopleComponent,
+    ProductComponent
   ],
   imports: [
     BrowserModule,
