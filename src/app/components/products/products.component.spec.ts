@@ -5,26 +5,30 @@ import {ProductsComponent} from './products.component';
 import {ProductComponent} from '../product/product.component';
 import {ProductsService} from "../../services/products.service";
 import {generateManyProducts} from '../../models/product.mock';
+import {ValueService} from "../../services/value.service";
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
-  let productService: ProductsService;
   let productServiceSpy: any = null;
+  let valueServiceSpy: any = null;
 
   beforeEach(() => {
     productServiceSpy = {
       getAll: jest.fn() // Crear un espía para el método 'getAll'
     };
+    valueServiceSpy = {
+      getPromiseValue: jest.fn()
+    };
     TestBed.configureTestingModule({
       declarations: [ProductsComponent, ProductComponent],
       providers: [
-        {provide: ProductsService, useValue: productServiceSpy}
+        {provide: ProductsService, useValue: productServiceSpy},
+        {provide: ValueService, useValue: valueServiceSpy}
       ]
     });
     fixture = TestBed.createComponent(ProductsComponent);
     component = fixture.componentInstance;
-    productService = TestBed.inject(ProductsService);
     const productsMock = generateManyProducts(3);
     productServiceSpy.getAll.mockReturnValue(of(productsMock)); // Usar mockReturnValue en el espía
     fixture.detectChanges(); // ngOnInit
@@ -76,6 +80,25 @@ describe('ProductsComponent', () => {
       expect(component.status).toEqual('error');
     }));
   });
+
+  describe('#callPromise', () => {
+    it('should call the promise', async () => {
+      // Arrange
+      const promiseValue = 'Promise Value';
+      valueServiceSpy.getPromiseValue.mockReturnValue(promiseValue); // Convertir la promesa en un observable
+
+      // Act
+      await component.callPromise();
+      fixture.detectChanges(); // ngOnInit
+
+      // Assert
+      expect(component.response).toEqual(promiseValue);
+      expect(valueServiceSpy.getPromiseValue).toHaveBeenCalled();
+    });
+  });
+
+
+
 
 });
 
