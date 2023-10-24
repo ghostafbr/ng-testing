@@ -16,7 +16,8 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm run test:watch` to execute the unit tests via [Jest](https://jestjs.io/). This command will run the tests in watch mode. To use this command, you need to first add a package that implements unit testing capabilities.
+Run `npm run test:coverage` to execute the unit tests via [Jest](https://jestjs.io/). This command will run the tests and generate a coverage report. To use this command, you need to first add a package that implements unit testing capabilities.
 
 ## Running end-to-end tests
 
