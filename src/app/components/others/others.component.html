@@ -3,4 +3,8 @@
   <h5 appHighlight>There is a value</h5>
   <h5 appHighlight="yellow">There is a value</h5>
   <input [(ngModel)]="color" [appHighlight]="color">
+  <p>Pipe</p>
+  <p>{{ 'My Text' | reverse }}</p>
+  <input [(ngModel)]="text">
+  <p>{{ text | reverse }}</p>
 </div>

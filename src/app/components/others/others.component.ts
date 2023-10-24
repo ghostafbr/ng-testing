@@ -8,5 +8,6 @@ import { Component } from '@angular/core';
 export class OthersComponent {
 
   color: string = 'pink';
+  text: string = 'Roma';
 
 }
