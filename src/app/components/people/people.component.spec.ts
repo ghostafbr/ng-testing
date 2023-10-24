@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { PeopleComponent } from './people.component';
 import {PersonComponent} from "../person/person.component";
 import {PersonModel} from "../../models/person.model";
 import {By} from "@angular/platform-browser";
+import {queryAll} from "../../../testing";
 
 describe('PeopleComponent', () => {
   let component: PeopleComponent;
@@ -30,7 +30,7 @@ describe('PeopleComponent', () => {
     ];
     // Act
     fixture.detectChanges();
-    const debugElement = fixture.debugElement.queryAll(By.css('app-person'));
+    const debugElement = queryAll(fixture, 'app-person');
     // Assert
     expect(debugElement.length).toEqual(component.people.length);
   });

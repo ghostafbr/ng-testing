@@ -1,5 +1,4 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {defer, of} from 'rxjs';
 import {ProductsComponent} from './products.component';
 import {ProductsService} from '../../services/products.service';
 import {ValueService} from '../../services/value.service';
@@ -8,6 +7,12 @@ import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {ProductComponent} from "../product/product.component";
 import {By} from "@angular/platform-browser";
 import {DebugElement} from "@angular/core";
+import {
+  asyncData,
+  asyncError,
+  mockObservable, queryByClass,
+  queryByTestId,
+} from "../../../testing";
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -28,7 +33,7 @@ describe('ProductsComponent', () => {
     valueService = TestBed.inject(ValueService);
 
     const productsMock = generateManyProducts(3);
-    jest.spyOn(productService, 'getAll').mockReturnValue(of(productsMock));
+    jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
     fixture.detectChanges();
   });
 
@@ -41,7 +46,7 @@ describe('ProductsComponent', () => {
     it('should return a list of products', () => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(of(productsMock));
+      jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
       const countPrev = component.products.length;
       // Act
       component.getAllProducts();
@@ -53,10 +58,10 @@ describe('ProductsComponent', () => {
     it('should change the status from "loading" to "success"', fakeAsync(() => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(defer(() => Promise.resolve(productsMock)));
+      jest.spyOn(productService, 'getAll').mockReturnValue(asyncData(productsMock));
       // Act
       component.getAllProducts();
-      fixture.detectChanges(); // ngOnInit
+      fixture.detectChanges();
       expect(component.status).toEqual('loading');
       tick(1000); // Wait 1 second, execute all pending asynchronous calls
       fixture.detectChanges();
@@ -66,8 +71,7 @@ describe('ProductsComponent', () => {
 
     it('should change the status from "loading" to "error"', fakeAsync(() => {
       // Arrange
-      const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(defer(() => Promise.reject('error')));
+      jest.spyOn(productService, 'getAll').mockReturnValue(asyncError('error'));
       // Act
       component.getAllProducts();
       fixture.detectChanges(); // ngOnInit
@@ -81,9 +85,9 @@ describe('ProductsComponent', () => {
     it('should getAll products when click on button', () => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(of(productsMock));
+      jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
       const countPrev = component.products.length;
-      const buttonDebug: DebugElement = fixture.debugElement.query(By.css('.btn-load-more'));
+      const buttonDebug: DebugElement = queryByTestId(fixture, 'btn-load-more');
       // Act
       buttonDebug.triggerEventHandler('click', null);
       fixture.detectChanges();
@@ -110,13 +114,13 @@ describe('ProductsComponent', () => {
       // Arrange
       const mockMsg = 'my mock string';
       jest.spyOn(valueService, 'getPromiseValue').mockResolvedValue(mockMsg);
-      const buttonDebug = fixture.debugElement.query(By.css('.btn-promise'));
+      const buttonDebug = queryByTestId(fixture, 'btn-promise')
 
       // Act
       buttonDebug.triggerEventHandler('click', null);
       await fixture.whenStable(); // Esperar hasta que todas las tareas asincrónicas se completen
       fixture.detectChanges();
-      const responseDebug = fixture.debugElement.query(By.css('p.resp'));
+      const responseDebug = queryByClass(fixture,'p.resp');
 
       // Assert
       expect(valueService.getPromiseValue).toHaveBeenCalled();
