@@ -9,6 +9,12 @@ describe('MasterService', () => {
   let valueService: ValueService;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        MasterService,
+        ValueService
+      ]
+    });
     valueService = TestBed.inject(ValueService);
     masterService = TestBed.inject(MasterService);
   });

@@ -13,8 +13,8 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   limit = 10;
   offset = 0;
-  response = '';
   status: 'loading' | 'success' | 'error' | 'init' = 'init';
+  response = '';
   private productsService = inject(ProductsService);
   private valueService = inject(ValueService);
 
