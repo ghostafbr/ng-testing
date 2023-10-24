@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OthersComponent } from './others.component';
+import {ReversePipe} from "../../pipes/reverse.pipe";
 
 describe('OthersComponent', () => {
   let component: OthersComponent;
@@ -8,7 +9,7 @@ describe('OthersComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [OthersComponent]
+      declarations: [OthersComponent, ReversePipe]
     });
     fixture = TestBed.createComponent(OthersComponent);
     component = fixture.componentInstance;
