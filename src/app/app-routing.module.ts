@@ -1,15 +1,10 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import {ProductsComponent} from "./components/products/products.component";
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {PicoPreviewComponent} from "./components/pico-preview/pico-preview.component";
 import {PeopleComponent} from "./components/people/people.component";
 import {OthersComponent} from "./components/others/others.component";
 
 const routes: Routes = [
-  {
-    path: 'products',
-    component: ProductsComponent
-  },
   {
     path: 'pico-preview',
     component: PicoPreviewComponent
@@ -21,11 +16,20 @@ const routes: Routes = [
   {
     path: 'others',
     component: OthersComponent
-  }
+  },
+  {
+    path: 'products',
+    loadChildren: () => import('./components/products/products.module').then(m => m.ProductsModule)
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}
