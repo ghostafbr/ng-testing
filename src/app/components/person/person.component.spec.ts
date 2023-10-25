@@ -4,6 +4,7 @@ import { PersonComponent } from './person.component';
 import {Component, DebugElement} from "@angular/core";
 import {By} from "@angular/platform-browser";
 import {PersonModel} from "../../models/person.model";
+import {clickEvent, getText} from "../../../testing";
 
 describe('PersonComponent', () => {
   let component: PersonComponent;
@@ -57,28 +58,28 @@ describe('PersonComponent', () => {
     // Arrange
     component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
     const expectedMessage = `Morbidly Obese`;
-    const button = fixture.debugElement.query(By.css('button.btn-bmi')).nativeElement;
+    // const button = fixture.debugElement.query(By.css('button.btn-bmi')).nativeElement;
     // Act
     component.calculateBMI();
     fixture.detectChanges();
+    const btnText = getText(fixture, 'btn-bmi');
     // Assert
-    expect(button?.textContent).toContain(expectedMessage);
+    expect(btnText).toContain(expectedMessage);
   });
 
-  it('should display a text with the BMI when do click', () => {
+  it('should display a text with the BMI when do click.ts', () => {
     // Arrange
     component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
     const expectedMessage = `Morbidly Obese`;
-    const buttonDebug: DebugElement = fixture.debugElement.query(By.css('button.btn-bmi'));
-    const buttonElement: HTMLElement = buttonDebug.nativeElement;
     // Act
-    buttonDebug.triggerEventHandler('click', null);
+    clickEvent(fixture, 'btn-bmi', true);
     fixture.detectChanges();
+    const btnText = getText(fixture, 'btn-bmi');
     // Assert
-    expect(buttonElement?.textContent).toContain(expectedMessage);
+    expect(btnText).toContain(expectedMessage);
   });
 
-  it('should emit an event when do click', () => {
+  it('should emit an event when do click.ts', () => {
     // Arrange
     component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
     const buttonDebug: DebugElement = fixture.debugElement.query(By.css('button.btn-choose'));
@@ -136,7 +137,7 @@ describe('PersonComponent from HostComponent', () => {
     expect(h3Element?.textContent).toContain(expectedName);
   });
 
-  it('should rise an event when do click', () => {
+  it('should rise an event when do click.ts', () => {
     // Arrange
     const buttonDebug: DebugElement = fixture.debugElement.query(By.css('app-person button.btn-choose'));
     // Act

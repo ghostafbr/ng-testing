@@ -82,7 +82,7 @@ describe('ProductsComponent', () => {
       expect(component.status).toEqual('error');
     }));
 
-    it('should getAll products when click on button', () => {
+    it('should getAll products when click.ts on button', () => {
       // Arrange
       const productsMock = generateManyProducts(10);
       jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
