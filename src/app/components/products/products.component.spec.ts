@@ -9,7 +9,7 @@ import {By} from "@angular/platform-browser";
 import {DebugElement} from "@angular/core";
 import {
   asyncData,
-  asyncError,
+  asyncError, getText,
   mockObservable, queryByClass,
   queryByTestId,
 } from "../../../testing";
@@ -120,12 +120,13 @@ describe('ProductsComponent', () => {
       buttonDebug.triggerEventHandler('click', null);
       await fixture.whenStable(); // Esperar hasta que todas las tareas asincrónicas se completen
       fixture.detectChanges();
-      const responseDebug = queryByClass(fixture,'p.resp');
+      // const responseDebug = fixture.debugElement.query(By.css('p.resp'));
+      const responseDebug = getText(fixture,'resp');
 
       // Assert
       expect(valueService.getPromiseValue).toHaveBeenCalled();
       expect(component.response).toEqual(mockMsg);
-      expect(responseDebug.nativeElement.textContent).toEqual(mockMsg);
+      expect(responseDebug).toEqual(mockMsg);
     });
   });
 

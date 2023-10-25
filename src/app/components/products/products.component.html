@@ -2,7 +2,7 @@
   <h1>Products Component</h1>
   <h3>Response</h3>
   <button data-testid="btn-promise" (click)="callPromise()">Call promise</button>
-  <p class="resp">{{ response }}</p>
+  <p data-testid="resp">{{ response }}</p>
   <div class="my-grid">
     <app-product *ngFor="let product of products" [product]="product"/>
   </div>
