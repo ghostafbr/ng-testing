@@ -5,7 +5,6 @@ import {ValueService} from '../../services/value.service';
 import {generateManyProducts} from '../../models/product.mock';
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {ProductComponent} from "../product/product.component";
-import {By} from "@angular/platform-browser";
 import {DebugElement} from "@angular/core";
 import {
   asyncData,
@@ -38,7 +37,6 @@ describe('ProductsComponent', () => {
 
     productServiceSpy = jest.spyOn(productService, 'getAll');
     valueServiceSpy = jest.spyOn(valueService, 'getPromiseValue');
-
     productServiceSpy.mockReturnValue(mockObservable(productsMock));
     fixture.detectChanges();
   });
@@ -63,6 +61,7 @@ describe('ProductsComponent', () => {
       fixture.detectChanges(); // ngOnInit
       // Assert
       expect(component.products.length).toEqual(productsMock.length + countPrev);
+      expect(productService.getAll).toHaveBeenCalled();
     });
 
     it('should change the status from "loading" to "success"', fakeAsync(() => {
