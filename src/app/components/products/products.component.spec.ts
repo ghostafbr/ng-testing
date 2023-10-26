@@ -19,6 +19,8 @@ describe('ProductsComponent', () => {
   let fixture: ComponentFixture<ProductsComponent>;
   let productService: ProductsService;
   let valueService: ValueService;
+  let productServiceSpy: any;
+  let valueServiceSpy: any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,8 +35,16 @@ describe('ProductsComponent', () => {
     valueService = TestBed.inject(ValueService);
 
     const productsMock = generateManyProducts(3);
-    jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
+
+    productServiceSpy = jest.spyOn(productService, 'getAll');
+    valueServiceSpy = jest.spyOn(valueService, 'getPromiseValue');
+
+    productServiceSpy.mockReturnValue(mockObservable(productsMock));
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should create', () => {
@@ -46,7 +56,7 @@ describe('ProductsComponent', () => {
     it('should return a list of products', () => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
+      productServiceSpy.mockReturnValue(mockObservable(productsMock));
       const countPrev = component.products.length;
       // Act
       component.getAllProducts();
@@ -58,7 +68,7 @@ describe('ProductsComponent', () => {
     it('should change the status from "loading" to "success"', fakeAsync(() => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(asyncData(productsMock));
+      productServiceSpy.mockReturnValue(asyncData(productsMock));
       // Act
       component.getAllProducts();
       fixture.detectChanges();
@@ -71,7 +81,7 @@ describe('ProductsComponent', () => {
 
     it('should change the status from "loading" to "error"', fakeAsync(() => {
       // Arrange
-      jest.spyOn(productService, 'getAll').mockReturnValue(asyncError('error'));
+      productServiceSpy.mockReturnValue(asyncError('error'));
       // Act
       component.getAllProducts();
       fixture.detectChanges(); // ngOnInit
@@ -85,7 +95,7 @@ describe('ProductsComponent', () => {
     it('should getAll products when click.ts on button', () => {
       // Arrange
       const productsMock = generateManyProducts(10);
-      jest.spyOn(productService, 'getAll').mockReturnValue(mockObservable(productsMock));
+      productServiceSpy.mockReturnValue(mockObservable(productsMock));
       const countPrev = component.products.length;
       const buttonDebug: DebugElement = queryByTestId(fixture, 'btn-load-more');
       // Act
@@ -101,7 +111,7 @@ describe('ProductsComponent', () => {
     it('should call the promise', async () => {
       // Arrange
       const promiseValue = 'Promise Value';
-      jest.spyOn(valueService, 'getPromiseValue').mockReturnValue(Promise.resolve(promiseValue));
+      valueServiceSpy.mockReturnValue(Promise.resolve(promiseValue));
       // Act
       await component.callPromise();
       fixture.detectChanges();
@@ -113,7 +123,7 @@ describe('ProductsComponent', () => {
     it('should show "my mock string" in <p> when btn is clicked', async () => {
       // Arrange
       const mockMsg = 'my mock string';
-      jest.spyOn(valueService, 'getPromiseValue').mockResolvedValue(mockMsg);
+      valueServiceSpy.mockResolvedValue(mockMsg);
       const buttonDebug = queryByTestId(fixture, 'btn-promise')
 
       // Act
