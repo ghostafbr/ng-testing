@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PersonComponent } from './person.component';
+import {PersonComponent} from './person.component';
 import {Component, DebugElement} from "@angular/core";
 import {By} from "@angular/platform-browser";
 import {PersonModel} from "../../models/person.model";
@@ -67,7 +67,7 @@ describe('PersonComponent', () => {
     expect(btnText).toContain(expectedMessage);
   });
 
-  it('should display a text with the BMI when do click.ts', () => {
+  it('should display a text with the BMI when click', () => {
     // Arrange
     component.person = new PersonModel('Valentina', 'Ramírez', 28, 130, 1.80);
     const expectedMessage = `Morbidly Obese`;
@@ -75,6 +75,7 @@ describe('PersonComponent', () => {
     clickEvent(fixture, 'btn-bmi', true);
     fixture.detectChanges();
     const btnText = getText(fixture, 'btn-bmi');
+    console.log('btnText', btnText);
     // Assert
     expect(btnText).toContain(expectedMessage);
   });
@@ -89,7 +90,6 @@ describe('PersonComponent', () => {
     });
     // Act
     buttonDebug.triggerEventHandler('click', null);
-
     fixture.detectChanges();
     // Assert
     expect(selectedPerson).toBe(component.person);
@@ -98,9 +98,10 @@ describe('PersonComponent', () => {
 });
 
 @Component({
-  template: `<app-person [person]="person" (onSelected)="onSelected($event)"/>`,
+  template: `
+    <app-person [person]="person" (onSelected)="onSelected($event)"/>`,
 })
-class HostComponent {
+class TestHostComponent {
   person = new PersonModel('Andrés', 'Bolaños', 28, 80, 1.75);
   selectedPerson: PersonModel | undefined;
 
@@ -109,15 +110,15 @@ class HostComponent {
   }
 }
 
-describe('PersonComponent from HostComponent', () => {
-  let component: HostComponent;
-  let fixture: ComponentFixture<HostComponent>;
+describe('PersonComponent from TestHostComponent', () => {
+  let component: TestHostComponent;
+  let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [HostComponent, PersonComponent]
+      declarations: [TestHostComponent, PersonComponent]
     });
-    fixture = TestBed.createComponent(HostComponent);
+    fixture = TestBed.createComponent(TestHostComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
