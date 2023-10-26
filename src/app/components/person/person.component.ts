@@ -8,7 +8,7 @@ import {PersonModel} from "../../models/person.model";
 })
 export class PersonComponent {
 
-  @Input() person!: PersonModel; // el signo "!" es para indicar que no es null permite inicializarlo después
+  @Input() person!: PersonModel; // el signo"!", es para indicar que no es null permite inicializarlo después
   @Output() onSelected = new EventEmitter<PersonModel>();
   bmi: string = '';
 
