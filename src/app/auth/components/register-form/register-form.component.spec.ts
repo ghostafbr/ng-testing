@@ -1,9 +1,17 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RegisterFormComponent} from './register-form.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {UserService} from "../../../services/user.service";
-import {getText, mockObservable, queryByClass, setInputValue} from "../../../../testing";
+import {
+  asyncData, clickElement,
+  clickEvent,
+  getText,
+  mockObservable,
+  queryByClass,
+  setCheckboxValue,
+  setInputValue
+} from "../../../../testing";
 import {generateOneUser} from "../../../models/user.mock";
 
 describe('RegisterFormComponent', () => {
@@ -100,12 +108,58 @@ describe('RegisterFormComponent', () => {
       checkTerms: true
     });
     const mockUser = generateOneUser();
-    // jest.spyOn(userService, 'create').mockResolvedValue(mockUser);
     userServiceSpy.mockReturnValue(mockObservable(mockUser));
     // Act
     component.register(new Event('submit'));
     expect(component.form.valid).toBeTruthy();
     expect(userService.create).toHaveBeenCalled();
   });
+
+  it('should send form successfully and change "loading" to "success"', fakeAsync(() => {
+    component.form.patchValue({
+      name: 'Andrés',
+      email: 'ghostafbr@gmail.com',
+      password: '12121212',
+      confirmPassword: '12121212',
+      checkTerms: true
+    });
+    const mockUser = generateOneUser();
+    userServiceSpy.mockReturnValue(asyncData(mockUser));
+    // Act
+    component.register(new Event('submit'));
+    expect(component.status).toEqual('loading');
+    tick();
+    fixture.detectChanges();
+    expect(component.status).toEqual('success');
+    expect(component.form.valid).toBeTruthy();
+    expect(userService.create).toHaveBeenCalled();
+  }));
+
+  it('should send form successfully demo UI', fakeAsync(() => {
+    component.form.patchValue({
+      name: 'Andrés',
+      email: 'ghostafbr@gmail.com',
+      password: '12121212',
+      confirmPassword: '12121212',
+      checkTerms: true
+    });
+    setInputValue(fixture, 'input#name', 'Andrés');
+    setInputValue(fixture, 'input#email', 'test@test.com');
+    setInputValue(fixture, 'input#password', '12121212');
+    setInputValue(fixture, 'input#confirmPassword', '12121212');
+    setCheckboxValue(fixture, 'input#terms', true);
+    const mockUser = generateOneUser();
+    userServiceSpy.mockReturnValue(asyncData(mockUser));
+    // Act
+    // queryByClass(fixture, 'form').triggerEventHandler('ngSubmit', new Event('submit'));
+    clickElement(fixture, 'btn-submit', true);
+    fixture.detectChanges();
+    expect(component.status).toEqual('loading');
+    tick();
+    fixture.detectChanges();
+    expect(component.status).toEqual('success');
+    expect(component.form.valid).toBeTruthy();
+    expect(userService.create).toHaveBeenCalled();
+  }));
 
 });

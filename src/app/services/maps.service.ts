@@ -10,10 +10,8 @@ export class MapsService {
   constructor() {}
 
   getCurrentPosition() {
-    console.log(navigator);
     navigator.geolocation.getCurrentPosition((position: any) => {
       const { latitude, longitude } = position.coords;
-      console.log(latitude, longitude);
     });
   }
 }

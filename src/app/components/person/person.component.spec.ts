@@ -75,7 +75,6 @@ describe('PersonComponent', () => {
     clickEvent(fixture, 'btn-bmi', true);
     fixture.detectChanges();
     const btnText = getText(fixture, 'btn-bmi');
-    console.log('btnText', btnText);
     // Assert
     expect(btnText).toContain(expectedMessage);
   });

@@ -26,15 +26,19 @@ export class RegisterFormComponent {
     }
   );
 
+  status: 'loading' | 'success' | 'error' | 'init' = 'init';
+
   register(event: Event) {
     event.preventDefault();
     if (this.form.valid) {
+      this.status = 'loading';
       const value = this.form.value;
       // @ts-ignore   // Revisar bien
       this.userService.create(value)
-        .subscribe((rta) => {
-          console.log(rta);
+        .subscribe((resp) => {
+          console.log(resp);
           // redirect
+          this.status = 'success';
         });
     } else {
       this.form.markAllAsTouched();
