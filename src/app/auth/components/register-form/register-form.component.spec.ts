@@ -4,21 +4,24 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {UserService} from "../../../services/user.service";
 import {
-  asyncData, clickElement,
-  clickEvent,
+  asyncData,
+  asyncError,
+  clickElement,
   getText,
   mockObservable,
-  queryByClass,
+  queryByClass, queryByTestId,
   setCheckboxValue,
   setInputValue
 } from "../../../../testing";
 import {generateOneUser} from "../../../models/user.mock";
+import {of} from "rxjs";
 
 describe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
   let fixture: ComponentFixture<RegisterFormComponent>;
   let userService: UserService;
-  let userServiceSpy: any;
+  let userServiceSpyCreate: any;
+  let userServiceSpyIsAvailableEmail: any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -31,7 +34,11 @@ describe('RegisterFormComponent', () => {
     component = fixture.componentInstance;
     userService = TestBed.inject(UserService);
 
-    userServiceSpy = jest.spyOn(userService, 'create');
+    userServiceSpyCreate = jest.spyOn(userService, 'create');
+    userServiceSpyIsAvailableEmail = jest.spyOn(userService, 'isAvailableEmail');
+
+    userServiceSpyIsAvailableEmail.mockReturnValue(of({isAvailable: true}));
+
     fixture.detectChanges();
   });
 
@@ -108,7 +115,7 @@ describe('RegisterFormComponent', () => {
       checkTerms: true
     });
     const mockUser = generateOneUser();
-    userServiceSpy.mockReturnValue(mockObservable(mockUser));
+    userServiceSpyCreate.mockReturnValue(mockObservable(mockUser));
     // Act
     component.register(new Event('submit'));
     expect(component.form.valid).toBeTruthy();
@@ -124,7 +131,7 @@ describe('RegisterFormComponent', () => {
       checkTerms: true
     });
     const mockUser = generateOneUser();
-    userServiceSpy.mockReturnValue(asyncData(mockUser));
+    userServiceSpyCreate.mockReturnValue(asyncData(mockUser));
     // Act
     component.register(new Event('submit'));
     expect(component.status).toEqual('loading');
@@ -136,20 +143,13 @@ describe('RegisterFormComponent', () => {
   }));
 
   it('should send form successfully demo UI', fakeAsync(() => {
-    component.form.patchValue({
-      name: 'Andrés',
-      email: 'ghostafbr@gmail.com',
-      password: '12121212',
-      confirmPassword: '12121212',
-      checkTerms: true
-    });
     setInputValue(fixture, 'input#name', 'Andrés');
     setInputValue(fixture, 'input#email', 'test@test.com');
     setInputValue(fixture, 'input#password', '12121212');
     setInputValue(fixture, 'input#confirmPassword', '12121212');
     setCheckboxValue(fixture, 'input#terms', true);
     const mockUser = generateOneUser();
-    userServiceSpy.mockReturnValue(asyncData(mockUser));
+    userServiceSpyCreate.mockReturnValue(asyncData(mockUser));
     // Act
     // queryByClass(fixture, 'form').triggerEventHandler('ngSubmit', new Event('submit'));
     clickElement(fixture, 'btn-submit', true);
@@ -161,5 +161,39 @@ describe('RegisterFormComponent', () => {
     expect(component.form.valid).toBeTruthy();
     expect(userService.create).toHaveBeenCalled();
   }));
+
+  it('should send the form from the UI but with error in the service', fakeAsync(() => {
+    setInputValue(fixture, 'input#name', 'Andrés');
+    setInputValue(fixture, 'input#email', 'test@test.com');
+    setInputValue(fixture, 'input#password', '12121212');
+    setInputValue(fixture, 'input#confirmPassword', '12121212');
+    setCheckboxValue(fixture, 'input#terms', true);
+    const mockUser = generateOneUser();
+    userServiceSpyCreate.mockReturnValue(asyncError(mockUser));
+    // Act
+    // queryByClass(fixture, 'form').triggerEventHandler('ngSubmit', new Event('submit'));
+    clickElement(fixture, 'btn-submit', true);
+    fixture.detectChanges();
+    expect(component.status).toEqual('loading');
+    tick();
+    fixture.detectChanges();
+    expect(component.status).toEqual('error');
+    expect(component.form.valid).toBeTruthy();
+    expect(userService.create).toHaveBeenCalled();
+  }));
+
+  it('should show an error with an invalid email', () => {
+    // Arrange
+    userServiceSpyIsAvailableEmail.mockReturnValue(of({isAvailable: false}));
+    setInputValue(fixture, 'input#email', 'nico@mail.com');
+    // Act
+    fixture.detectChanges();
+    // Assert
+    expect(component.emailField?.invalid).toBeTruthy();
+    expect(userService.isAvailableEmail).toHaveBeenCalledWith('nico@mail.com');
+    // reto
+    const errorMsg = getText(fixture, 'emailField-not-available');
+    expect(errorMsg).toContain('The email is already in use');
+  });
 
 });

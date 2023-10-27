@@ -38,6 +38,9 @@
             <small *ngIf="emailField?.hasError('email')" data-testid="emailField-email"
             >*It's not a email</small
             >
+            <small *ngIf="emailField?.hasError('not_available')" data-testid="emailField-not-available">The email is already in
+              use</small
+            >
           </ng-container>
         </label>
       </div>

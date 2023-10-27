@@ -1,4 +1,6 @@
-import { AbstractControl } from '@angular/forms';
+import {AbstractControl} from '@angular/forms';
+import {UserService} from "../services/user.service";
+import {map} from "rxjs/operators";
 
 export class MyValidators {
 
@@ -21,10 +23,13 @@ export class MyValidators {
   static matchPasswords(control: AbstractControl) {
     const password = control?.get('password')?.value;
     const confirmPassword = control?.get('confirmPassword')?.value;
+    if (password === undefined || confirmPassword === undefined) {
+      throw new Error('matchPasswords: fields not found');
+    }
     if (password !== confirmPassword) {
       return {match_password: true};
     }
-    return null;
+    return null; // null === todo bien
   }
 
   // static validateCategory(service: CategoriesService) {
@@ -43,13 +48,28 @@ export class MyValidators {
   //   };
   // }
 
+  static validateEmailAsync(service: UserService) {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      return service.isAvailableEmail(value).pipe(
+        map((response) => {
+          const isAvailable = response.isAvailable;
+          if (!isAvailable) {
+            return {not_available: true};
+          }
+          return null;
+        })
+      );
+    };
+  }
+
 }
 
-function containsNumber(value: string){
+function containsNumber(value: string) {
   return value.split('').find(v => isNumber(v)) !== undefined;
 }
 
 
-function isNumber(value: string){
+function isNumber(value: string) {
   return !isNaN(parseInt(value, 10));
 }

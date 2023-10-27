@@ -16,7 +16,7 @@ export class RegisterFormComponent {
   form = this.fb.group(
     {
       name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email], [MyValidators.validateEmailAsync(this.userService)]],
       password: ['', [Validators.required, Validators.minLength(6), MyValidators.validPassword]],
       confirmPassword: ['', [Validators.required]],
       checkTerms: [false, [Validators.requiredTrue]],
@@ -36,9 +36,10 @@ export class RegisterFormComponent {
       // @ts-ignore   // Revisar bien
       this.userService.create(value)
         .subscribe((resp) => {
-          console.log(resp);
           // redirect
           this.status = 'success';
+        }, (err) => {
+          this.status = 'error';
         });
     } else {
       this.form.markAllAsTouched();
