@@ -7,12 +7,14 @@ import {Calculator} from "./calculator";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
-  title = 'ng-testing';
+  title: string = 'ng-testing';
 
-  ngOnInit() {
+  ngOnInit(): void {
     const calculator = new Calculator();
-    const response = calculator.multiply(2, 3);
-    const response2 = calculator.divide(6, 3);
+    const rta: number = calculator.multiply(3,3);
+    // console.log(rta === 9);
+    const rta2: number = calculator.divide(3,1);
+    // console.log(rta2 === null);
   }
 
 }

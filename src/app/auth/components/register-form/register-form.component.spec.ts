@@ -15,6 +15,7 @@ import {
 } from "../../../../testing";
 import {generateOneUser} from "../../../models/user.mock";
 import {of} from "rxjs";
+import {Router} from "@angular/router";
 
 describe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
@@ -22,17 +23,22 @@ describe('RegisterFormComponent', () => {
   let userService: UserService;
   let userServiceSpyCreate: any;
   let userServiceSpyIsAvailableEmail: any;
+  let router: Router
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [RegisterFormComponent],
-      providers: [UserService],
+      providers: [
+        UserService,
+        { provide: Router, useValue: {navigateByUrl: jest.fn()} }
+      ],
       imports: [ReactiveFormsModule, HttpClientTestingModule]
     });
 
     fixture = TestBed.createComponent(RegisterFormComponent);
     component = fixture.componentInstance;
     userService = TestBed.inject(UserService);
+    router = TestBed.inject(Router);
 
     userServiceSpyCreate = jest.spyOn(userService, 'create');
     userServiceSpyIsAvailableEmail = jest.spyOn(userService, 'isAvailableEmail');
@@ -140,6 +146,7 @@ describe('RegisterFormComponent', () => {
     expect(component.status).toEqual('success');
     expect(component.form.valid).toBeTruthy();
     expect(userService.create).toHaveBeenCalled();
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/auth/login');
   }));
 
   it('should send form successfully demo UI', fakeAsync(() => {

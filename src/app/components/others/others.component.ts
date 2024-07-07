@@ -1,13 +1,27 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ProductsService} from "../../services/products.service";
+import {Product} from "../../models/product.model";
 
 @Component({
   selector: 'app-others',
   templateUrl: './others.component.html',
   styleUrls: ['./others.component.scss']
 })
-export class OthersComponent {
+export class OthersComponent implements OnInit {
 
-  color: string = 'pink';
-  text: string = 'Roma';
+  color: string = 'yellow';
+  text: string = 'Un texto';
+  products: Product[] = [];
+
+  constructor(
+    private productService: ProductsService
+  ) { }
+
+  ngOnInit(): void {
+    this.productService.getAll()
+      .subscribe(data => {
+        this.products = data;
+      })
+  }
 
 }

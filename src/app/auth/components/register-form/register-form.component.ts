@@ -1,7 +1,8 @@
 import {Component, inject} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {UserService} from "../../../services/user.service";
 import {MyValidators} from "../../../utils/validators";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-register-form',
@@ -12,8 +13,9 @@ export class RegisterFormComponent {
 
   private fb: FormBuilder = inject(FormBuilder);
   private userService: UserService = inject(UserService);
+  private router: Router = inject(Router);
 
-  form = this.fb.group(
+  form: FormGroup = this.fb.group(
     {
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email], [MyValidators.validateEmailAsync(this.userService)]],
@@ -33,13 +35,14 @@ export class RegisterFormComponent {
     if (this.form.valid) {
       this.status = 'loading';
       const value = this.form.value;
-      // @ts-ignore   // Revisar bien
       this.userService.create(value)
-        .subscribe((resp) => {
-          // redirect
-          this.status = 'success';
-        }, (err) => {
-          this.status = 'error';
+        .subscribe({
+          next: (): void => {
+            this.status = 'success';
+            this.router.navigateByUrl('/auth/login');
+          }, error: (err): void => {
+            this.status = 'error';
+          }
         });
     } else {
       this.form.markAllAsTouched();

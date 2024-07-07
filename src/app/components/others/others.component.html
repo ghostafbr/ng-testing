@@ -1,10 +1,11 @@
-<div class="container">
-  <p>Directive</p>
-  <h5 appHighlight>There is a value</h5>
-  <h5 appHighlight="yellow">There is a value</h5>
-  <input [(ngModel)]="color" [appHighlight]="color">
-  <p>Pipe</p>
-  <p>{{ 'My Text' | reverse }}</p>
-  <input [(ngModel)]="text">
+<section class="container">
+  <h1 data-testid="products-length">Total {{ products.length }}</h1>
+  <h5 appHighlight="yellow">Something Yellow</h5>
+  <h5 appHighlight>The Default (Gray)</h5>
+  <h5>No Highlight</h5>
+  <input [(ngModel)]="color" [appHighlight]="color" />
+
+  <h3>{{ 'Texto largo' | reverse }}</h3>
+  <input [(ngModel)]="text" />
   <p>{{ text | reverse }}</p>
-</div>
+</section>

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {switchMap, tap} from 'rxjs/operators';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import {environment} from '../../environments/environment';
 import {Auth} from '../models/auth.model';
@@ -22,6 +22,10 @@ export class AuthService {
     private http: HttpClient,
     private tokenService: TokenService
   ) {
+  }
+
+  getUser(): Observable<User | null> {
+    return this.user.asObservable();
   }
 
   getCurrentUser() {
