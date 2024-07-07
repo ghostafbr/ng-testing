@@ -11,46 +11,32 @@ import {HttpClientTestingModule} from "@angular/common/http/testing";
 
 describe('Tests for AuthGuard', (): void => {
   let guard: AuthGuard;
-  let tokenService: TokenService;
-  let authService: AuthService;
-  let router: Router;
+  let tokenService: jest.Mocked<TokenService>;
+  let authService: jest.Mocked<AuthService>;
+  let router: jest.Mocked<Router>;
 
   beforeEach((): void => {
-    // const tokenServiceSpy: jest.SpyInstance = jest.spyOn(TokenService as any, 'getToken');
-    // const authServiceSpy: jest.SpyInstance = jest.spyOn(AuthService as any, 'user$');
-    // const routerSpy: jest.SpyInstance = jest.spyOn(Router as any, 'navigate');
 
     TestBed.configureTestingModule({
       providers: [
         AuthGuard,
-
-        /*{ provide: TokenService, useValue: jest.fn() },
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },*/
+        {provide: AuthService, useValue: {getUser: jest.fn()}},
+        {provide: TokenService, useValue: {getToken: jest.fn()}},
+        {provide: Router, useValue: {navigate: jest.fn()}},
       ],
-      imports: [HttpClientTestingModule],
     });
     guard = TestBed.inject(AuthGuard);
-    tokenService = TestBed.inject(TokenService);
-    authService = TestBed.inject(AuthService);
-    router = TestBed.inject(Router);
+    tokenService = TestBed.inject(TokenService) as jest.Mocked<TokenService>;
+    authService = TestBed.inject(AuthService) as jest.Mocked<AuthService>;
+    router = TestBed.inject(Router) as jest.Mocked<Router>;
   });
 
   it('should be create', (): void => {
     expect(guard).toBeTruthy();
   });
 
-  it('should return true with session', (done): void => {
-    const activatedRoute: ActivatedRouteSnapshot = fakeActivatedRouteSnapshot({
-      /*
-      * params: {
-      *  idProduct: '1212'
-      * }
-      * */
-      paramMap: fakeParamMap({
-        idProduct: '1212'
-      })
-    });
+  it('should return true with session', (doneFn: jest.DoneCallback): void => {
+    const activatedRoute: ActivatedRouteSnapshot = fakeActivatedRouteSnapshot({});
     const routerState: RouterStateSnapshot = fakeRouterStateSnapshot({});
     const userMock: User = generateOneUser();
     jest.spyOn(tokenService, 'getToken');
@@ -59,21 +45,12 @@ describe('Tests for AuthGuard', (): void => {
 
     guard.canActivate(activatedRoute, routerState).subscribe((resp: any): void => {
       expect(resp).toBeTruthy();
-      done();
+      doneFn();
     });
   });
 
   it('should return false without session', (doneFn: jest.DoneCallback): void => {
-    const activatedRoute: ActivatedRouteSnapshot = fakeActivatedRouteSnapshot({
-      /*
-      * params: {
-      *  idProduct: '1212'
-      * }
-      * */
-      paramMap: fakeParamMap({
-        idProduct: '1212'
-      })
-    });
+    const activatedRoute: ActivatedRouteSnapshot = fakeActivatedRouteSnapshot({});
     const routerState: RouterStateSnapshot = fakeRouterStateSnapshot({});
 
     jest.spyOn(authService, 'getUser').mockReturnValue(mockObservable(null));
@@ -82,7 +59,21 @@ describe('Tests for AuthGuard', (): void => {
     guard.canActivate(activatedRoute, routerState)
       .subscribe(resp => {
         expect(resp).toBeFalsy();
-        expect(router.navigate).toHaveBeenCalledWith(['/home']);
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+        doneFn();
+      });
+  });
+
+  it('should false with idProduct Params', (doneFn: jest.DoneCallback) => {
+    const activatedRoute: ActivatedRouteSnapshot = fakeActivatedRouteSnapshot({});
+    const routerState: RouterStateSnapshot = fakeRouterStateSnapshot({});
+
+    authService.getUser.mockReturnValue(mockObservable(null));
+
+    guard.canActivate(activatedRoute, routerState)
+      .subscribe(rta => {
+        expect(rta).toBeFalsy()
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
         doneFn();
       });
   });
